@@ -1,66 +1,70 @@
 from tkinter import *
+import tkinter.messagebox as messagebox
 import random, string
 
-
-root = Tk()
-root.geometry("400x280")
-root.title("Password Generator")
-
-title = StringVar()
-label = Label(root, textvariable=title).pack()
-title.set("The strength of our password:")
-
-
-
-def selection():
-    selection = choice.get()
-
-choice = IntVar()
-R1 = Radiobutton(root, text="POOR", variable=choice, value=1, command=selection).pack(anchor=CENTER)
-R2 = Radiobutton(root, text="AVERAGE", variable=choice, value=2, command=selection).pack(anchor=CENTER)
-R3 = Radiobutton(root, text="ADVANCED", variable=choice, value=3, command=selection).pack(anchor=CENTER)
-labelchoice = Label(root)
-labelchoice.pack()
-
-
-lenlabel = StringVar()
-lenlabel.set("Password length:")
-lentitle = Label(root, textvariable=lenlabel).pack()
-
-#
-val = IntVar()
-spinlenght = Spinbox(root, from_=8, to_=24, textvariable=val, width=13).pack()
-
-# passprint
-
+def passgen():
+    if choice.get() == 1:
+        return "".join(random.sample(poor, val.get()))
+    elif choice.get() == 2:
+        return "".join(random.sample(average, val.get()))
+    elif choice.get() == 3:
+        return "".join(random.sample(advance, val.get()))
 
 def callback():
-  lsum.config(text=passgen())
+    generated_password = passgen()
+    password_entry.delete(0, END)
+    password_entry.insert(0, generated_password)
+    messagebox.showinfo("Generated Password", f"Your generated password is: {generated_password}")
 
+# Initialize main window
+root = Tk()
+root.geometry("400x400")
+root.title("Password Generator")
+root.configure(bg='#add8e6')  # Set background color
 
-# clickable button
-passgenButton = Button(root, text="Generate Password", bd=5, height=2, command=callback, pady=3)
-passgenButton.pack()
-password = str(callback)
+# Title label
+title = Label(root, text="Password Generator", font=("Arial", 18, "bold"), bg='#add8e6')
+title.pack(pady=10)
 
-# password result message
-lsum = Label(root, text="")
-lsum.pack(side=BOTTOM)
+# Instruction label
+instruction = Label(root, text="Choose the strength of the password:", font=("Arial", 12, "bold"), bg='#add8e6')
+instruction.pack()
 
-# function
-poor= string.ascii_uppercase + string.ascii_lowercase
-average= string.ascii_uppercase + string.ascii_lowercase + string.digits
-symbols = """`~!@#$%^&*()_-+={}[]\|:;"'<>,.?/"""
-advance = poor+ average + symbols
+# Strength choice radio buttons
+choice = IntVar()
+R1 = Radiobutton(root, text="Weak", variable=choice, value=1, font=("Arial", 12), bg='#add8e6')
+R2 = Radiobutton(root, text="Medium", variable=choice, value=2, font=("Arial", 12), bg='#add8e6')
+R3 = Radiobutton(root, text="Strong", variable=choice, value=3, font=("Arial", 12), bg='#add8e6')
+R1.pack(anchor=CENTER)
+R2.pack(anchor=CENTER)
+R3.pack(anchor=CENTER)
 
+# Password length label
+lenlabel = Label(root, text="Password Length", font=("Arial", 14, "bold"), bg='#add8e6')
+lenlabel.pack(pady=10)
 
-def passgen():
- if choice.get() == 1:
-  return "".join(random.sample(poor, val.get()))
- elif choice.get() == 2:
-  return "".join(random.sample(average, val.get()))
- elif choice.get() == 3:
-  return "".join(random.sample(advance, val.get()))
+# Spinbox for password length
+val = IntVar(value=8)
+spinlength = Spinbox(root, from_=8, to_=24, textvariable=val, width=10, font=("Arial", 12))
+spinlength.pack()
 
+# Generate password button
+passgenButton = Button(root, text="Generate", bd=3, command=callback, font=("Arial", 12))
+passgenButton.pack(pady=20)
 
+# Entry to display generated password
+password_entry = Entry(root, font=("Arial", 12), width=30)
+password_entry.pack(pady=10)
+
+# Copy password button
+copy_button = Button(root, text="Copy Password", bd=3, font=("Arial", 12), command=lambda: root.clipboard_append(password_entry.get()))
+copy_button.pack(pady=10)
+
+# Character sets for password generation
+poor = string.ascii_uppercase + string.ascii_lowercase
+average = string.ascii_uppercase + string.ascii_lowercase + string.digits
+symbols = """`~!@#$%^&*()_-+={}[]|:;"'<>,.?/"""
+advance = poor + average + symbols
+
+# Run the main event loop
 root.mainloop()
