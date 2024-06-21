@@ -68,3 +68,5 @@ advance = poor + average + symbols
 
 # Run the main event loop
 root.mainloop()
+
+# Thank you for viewing
