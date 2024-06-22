@@ -8,51 +8,80 @@ class ContactManagerApp:
 
         self.contacts = []
 
+        # Create main frame
+        self.main_frame = tk.Frame(root)
+        self.main_frame.pack(fill=tk.BOTH, expand=1)
+
+        # Create a canvas
+        self.canvas = tk.Canvas(self.main_frame)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        # Add a scrollbar to the canvas
+        self.scrollbar = tk.Scrollbar(self.main_frame, orient=tk.VERTICAL, command=self.canvas.yview)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Configure the canvas
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+
+        # Create another frame inside the canvas
+        self.scrollable_frame = tk.Frame(self.canvas)
+
+        # Add that new frame to a window in the canvas
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
         # Create GUI components
-        self.title_label = tk.Label(root, text="Contact Manager", font=("Helvetica", 16))
+        self.title_label = tk.Label(self.scrollable_frame, text="Contact Manager", font=("Helvetica", 16))
         self.title_label.pack(pady=10)
 
-        self.name_label = tk.Label(root, text="Name:")
+        self.name_label = tk.Label(self.scrollable_frame, text="Name:")
         self.name_label.pack(pady=5)
-        self.name_entry = tk.Entry(root)
+        self.name_entry = tk.Entry(self.scrollable_frame)
         self.name_entry.pack(pady=5)
 
-        self.phone_label = tk.Label(root, text="Phone Number:")
+        self.phone_label = tk.Label(self.scrollable_frame, text="Phone Number:")
         self.phone_label.pack(pady=5)
-        self.phone_entry = tk.Entry(root)
+        self.phone_entry = tk.Entry(self.scrollable_frame)
         self.phone_entry.pack(pady=5)
 
-        self.email_label = tk.Label(root, text="Email:")
+        self.email_label = tk.Label(self.scrollable_frame, text="Email:")
         self.email_label.pack(pady=5)
-        self.email_entry = tk.Entry(root)
+        self.email_entry = tk.Entry(self.scrollable_frame)
         self.email_entry.pack(pady=5)
 
-        self.address_label = tk.Label(root, text="Address:")
+        self.address_label = tk.Label(self.scrollable_frame, text="Address:")
         self.address_label.pack(pady=5)
-        self.address_entry = tk.Entry(root)
+        self.address_entry = tk.Entry(self.scrollable_frame)
         self.address_entry.pack(pady=5)
 
-        self.add_button = tk.Button(root, text="Add Contact", command=self.add_contact)
+        self.add_button = tk.Button(self.scrollable_frame, text="Add Contact", command=self.add_contact)
         self.add_button.pack(pady=10)
 
-        self.contact_listbox = tk.Listbox(root, width=50, height=10)
-        self.contact_listbox.pack(pady=10)
+        # Create a frame for the listbox and scrollbar
+        self.listbox_frame = tk.Frame(self.scrollable_frame)
+        self.listbox_frame.pack(pady=10)
+
+        self.scrollbar_listbox = tk.Scrollbar(self.listbox_frame, orient=tk.VERTICAL)
+        self.contact_listbox = tk.Listbox(self.listbox_frame, width=50, height=10, yscrollcommand=self.scrollbar_listbox.set)
+        self.scrollbar_listbox.config(command=self.contact_listbox.yview)
+        self.scrollbar_listbox.pack(side=tk.RIGHT, fill=tk.Y)
+        self.contact_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         self.contact_listbox.bind('<<ListboxSelect>>', self.load_selected_contact)
 
-        self.update_button = tk.Button(root, text="Update Contact", command=self.update_contact)
+        self.update_button = tk.Button(self.scrollable_frame, text="Update Contact", command=self.update_contact)
         self.update_button.pack(pady=5)
 
-        self.delete_button = tk.Button(root, text="Delete Contact", command=self.delete_contact)
+        self.delete_button = tk.Button(self.scrollable_frame, text="Delete Contact", command=self.delete_contact)
         self.delete_button.pack(pady=5)
 
-        self.search_label = tk.Label(root, text="Search by Name or Phone:")
+        self.search_label = tk.Label(self.scrollable_frame, text="Search by Name or Phone:")
         self.search_label.pack(pady=5)
-        self.search_entry = tk.Entry(root)
+        self.search_entry = tk.Entry(self.scrollable_frame)
         self.search_entry.pack(pady=5)
-        self.search_button = tk.Button(root, text="Search", command=self.search_contact)
+        self.search_button = tk.Button(self.scrollable_frame, text="Search", command=self.search_contact)
         self.search_button.pack(pady=5)
 
-        self.reset_button = tk.Button(root, text="Reset", command=self.reset_fields)
+        self.reset_button = tk.Button(self.scrollable_frame, text="Reset", command=self.reset_fields)
         self.reset_button.pack(pady=5)
 
     def add_contact(self):
